@@ -9,7 +9,7 @@
 #?(:clj
    (defmacro defcomponent [nam & bodies]
      "This macro overrides the qlkit defcomponent macro to remove explicit 'this'"
-     `(qlkit.core/defcomponent-raw
+     `(qlkit.core/defcomponent*
         ~nam
         ~@(for [[k & v :as body] bodies]
             (if (= k 'render)
@@ -38,7 +38,7 @@
 (def ^:dynamic *this* nil)
 
 (defn transact! [& query]
-  (apply ql/transact-raw! *this* query))
+  (apply ql/transact!* *this* query))
 
 (defn- fix-event-references [this props]
   "This function decouples events from using the traditional javascript 'this' context into something that can be managed in a more clojure-y way."
@@ -116,4 +116,4 @@
              
              (defn update-state! [fun & args]
                "Update the component-local state with the given function"
-               (apply ql/update-state-raw! *this* fun args)))) 
+               (apply ql/update-state!* *this* fun args)))) 
