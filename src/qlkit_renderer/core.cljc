@@ -99,8 +99,6 @@
                        children         (vec (map (partial create-element this) (ql/splice-in-seqs children)))]
                    (if (and (keyword? typ) (namespace typ))
                      (ql/create-instance typ props)
-                     #_(let [{:keys [::react-class :query] :as class} (@ql/classes typ)]
-                       (apply createElement react-class #js {:atts (dissoc props ::env) :env (::env props) :query query} children))
                      (apply createElement
                             (ensure-element-type typ)
                             (->> props
