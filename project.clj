@@ -1,4 +1,4 @@
-(defproject qlkit-renderer "0.2.0-SNAPSHOT"
+(defproject qlkit-renderer "0.3.0"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -11,7 +11,7 @@
   :dependencies [[org.clojure/clojure "1.9.0-beta4"]
                  [org.clojure/clojurescript "1.9.946"]
                  [org.clojure/core.async  "0.3.443"]
-                 [qlkit "0.2.0-SNAPSHOT"]]
+                 [qlkit "0.3.0"]]
 
   :plugins [[lein-figwheel "0.5.14"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
