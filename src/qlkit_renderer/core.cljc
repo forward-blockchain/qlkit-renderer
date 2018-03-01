@@ -71,14 +71,6 @@
 
 
 #?(:cljs (do (declare create-element)
-             
-             (defn- fix-inline-react [this props]
-               "These are idiosyncratic properties that may emit raw react components that need to be created."
-               (cond-> props
-                 (contains? props :actions) (update :actions
-                                                    (fn [actions]
-                                                      (apply array (map (partial create-element this) actions))))
-                 (contains? props :right-icon) (update :right-icon (partial create-element this))))
 
              (defn- ensure-element-type [typ]
                (or (cond (keyword? typ) (or (@ql/component-registry typ)
@@ -97,7 +89,7 @@
                                           [(first more) (rest more)]
                                           [{} more])
                        children         (vec (map (partial create-element this) (ql/splice-in-seqs children)))]
-                   (if (and (keyword? typ) (namespace typ))
+                   (if (@ql/classes typ)
                      (ql/create-instance typ props)
                      (apply createElement
                             (ensure-element-type typ)
@@ -105,7 +97,6 @@
                                  gather-style-props
                                  (fix-event-references this)
                                  fix-classname
-                                 (fix-inline-react this)
                                  camel-case-keys
                                  clj->js)
                             children)))))
