@@ -12,7 +12,7 @@
      `(qlkit.core/defcomponent*
         ~nam
         ~@(for [[k & v :as body] bodies]
-            (if (#{'render 'component-did-mount 'component-will-unmount} k) ;; TODO update as qlkit supports more React hooks
+            (if (#{'render 'component-did-mount 'component-will-unmount 'component-will-receive-props} k) ;; TODO update as qlkit supports more React hooks
               `(~k [this# ~@(first v)]
                 (binding [*this* this#]
                   ~@(rest v)))
