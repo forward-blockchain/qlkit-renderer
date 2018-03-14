@@ -90,7 +90,7 @@
                                           [{} more])
                        children         (vec (map (partial create-element this) (ql/splice-in-seqs children)))]
                    (if (@ql/classes typ)
-                     (ql/create-instance typ props)
+                     (ql/create-instance typ (fix-event-references this props))
                      (apply createElement
                             (ensure-element-type typ)
                             (->> props
