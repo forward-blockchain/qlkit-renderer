@@ -88,9 +88,15 @@
                        [props children] (if (map? (first more))
                                           [(first more) (rest more)]
                                           [{} more])
-                       child-elements   (vec (map (partial create-element this) (ql/splice-in-seqs children)))]
+                       this             (or (::this props) this)]
                    (if (@ql/classes typ)
-                     (ql/create-instance typ (assoc (fix-event-references this props) :children children))
+                     (ql/create-instance typ
+                                         (assoc (fix-event-references this props)
+                                                :children
+                                                (for [child children]
+                                                  (cond (not (coll? child))   child
+                                                        (map? (second child)) (assoc-in child [1 ::this] this)
+                                                        :else                 (vec (concat [(first child) {::this this} (rest child)]))))))
                      (apply createElement
                             (ensure-element-type typ)
                             (->> props
@@ -99,7 +105,7 @@
                                  fix-classname
                                  camel-case-keys
                                  clj->js)
-                            child-elements)))))
+                            (vec (map (partial create-element this) (ql/splice-in-seqs children))))))))
 
              (swap! ql/rendering-middleware conj create-element)
              
