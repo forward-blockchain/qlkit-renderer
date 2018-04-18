@@ -96,7 +96,7 @@
                                                 (for [child children]
                                                   (cond (not (coll? child))   child
                                                         (map? (second child)) (assoc-in child [1 ::this] this)
-                                                        :else                 (vec (concat [(first child) {::this this} (rest child)]))))))
+                                                        :else                 (vec (concat [(first child)] [{::this this}] (rest child)))))))
                      (apply createElement
                             (ensure-element-type typ)
                             (->> props
