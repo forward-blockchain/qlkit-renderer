@@ -10,7 +10,6 @@
 
   :dependencies [[org.clojure/clojure "1.9.0-beta4"]
                  [org.clojure/clojurescript "1.9.946"]
-                 [org.clojure/core.async  "0.3.443"]
                  [qlkit "0.3.0-SNAPSHOT"]]
 
   :plugins [[lein-figwheel "0.5.14"]
