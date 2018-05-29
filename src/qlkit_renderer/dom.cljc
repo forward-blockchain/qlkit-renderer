@@ -306,4 +306,7 @@
                         :word-break
                         :word-spacing
                         :word-wrap
-                        :z-index})
+                        :z-index
+                        :fill
+                        :stroke
+                        :stroke-width})
