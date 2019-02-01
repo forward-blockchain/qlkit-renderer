@@ -20,7 +20,7 @@
 
 (defn- camel-case [s]
   "Convert a shishkabob string to camelcase"
-  (let [words (st/split s #"-")]
+  (let [words (st/split s #"-|:")]
     (apply str
            (first words)
            (for [word (rest words)]

@@ -129,7 +129,10 @@
     :polygon
     :radialGradient
     :stop
-    :tspan})
+    :tspan
+    :filter
+    :feImage
+    :feComposite})
 
 (def style-attributes #{:align-content
                         :align-items
@@ -288,6 +291,7 @@
                         :text-overflow
                         :text-shadow
                         :text-transform
+                        :touch-action
                         :top
                         :transform
                         :transform-origin
