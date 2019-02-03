@@ -105,7 +105,7 @@
                                  fix-classname
                                  camel-case-keys
                                  clj->js)
-                            (vec (map (partial create-element this) (ql/splice-in-seqs children))))))))
+                            (vec (map (partial create-element this) (#'ql/splice-in-seqs children))))))))
 
              (swap! ql/rendering-middleware conj create-element)
              
