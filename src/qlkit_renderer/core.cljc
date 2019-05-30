@@ -1,4 +1,5 @@
 (ns qlkit-renderer.core
+  #?(:cljs (:require-macros [qlkit-renderer.core]))
   (:require #?@(:cljs [[react-dom :refer [render]]
                        [react :refer [createElement]]
                        [create-react-class :refer [createReactClass]]])
