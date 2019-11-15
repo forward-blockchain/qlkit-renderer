@@ -19,7 +19,7 @@
                   ~@(rest v)))
               body)))))
 
-(defn- camel-case [s]
+(defn- camel-case-slow [s]
   "Convert a shishkabob string to camelcase"
   (let [words (st/split s #"-|:")]
     (apply str
@@ -27,14 +27,44 @@
            (for [word (rest words)]
              (str (st/upper-case (first word)) (subs word 1))))))
 
+#?(:clj  (def camel-case camel-case-slow)
+   :cljs (defn- camel-case [s]
+           "Convert a shishkabob string to camelcase"
+           (let [copy-till-delim (fn [acc n]
+                                   (let [c (.charAt s n)]
+                                     (case c 
+                                       "" acc
+                                       ("-" ":") (recur (str acc (.toUpperCase (.charAt s (inc n)))) (+ n 2))
+                                       (recur (str acc c) (inc n)))))]
+             (copy-till-delim "" 0))))
+
 (defn- camel-case-keys [kv-map]
   "CamelCases all the keys, but only if they are keywords."
-  (into {}
-        (for [[k v] kv-map]
-          [(if (keyword? k)
-             (keyword (camel-case (name k)))
-             k)
-           v])))
+  (let [result (transient {})]
+    (doseq [[k v] kv-map]
+      (assoc! result
+              (if (keyword? k)
+                (keyword (camel-case (name k)))
+                k)
+              v))
+    (persistent! result)))
+
+(def style-attributes-camel (into {}
+                                  (for [k dom/style-attributes]
+                                    [k (keyword (camel-case-slow (name k)))])))
+
+(defn- gather-style-props [props]
+  "Gathers legal DOM style elements in style tag. Can override this behavior by using string key instead of keyword key."
+  (let [root (transient {})
+        style (transient {})]
+    (doseq [[k v] props]
+      (if-let [q (style-attributes-camel k)]
+        (assoc! style q v)
+        (assoc! root k v)))
+    (let [style (persistent! style)]
+      (when (seq style)
+        (assoc! root :style style))
+      (persistent! root))))
 
 (def ^:dynamic *this* nil)
 
@@ -43,13 +73,14 @@
 
 (defn- fix-event-references [this props]
   "This function decouples events from using the traditional javascript 'this' context into something that can be managed in a more clojure-y way."
-  (into {}
-        (for [[k v] props]
-          (if (fn? v)
-            [k (fn [& args]
-                 (binding [*this* this]
-                   (apply v args)))]
-            [k v]))))
+  (reduce (fn [acc [k v :as item]]
+            (if (fn? v)
+              (assoc acc k (fn [& args]
+                          (binding [*this* this]
+                            (apply v args))))
+              acc))
+          props
+          props))
 
 (defn- fix-classname [props]
   "React doesn't permit the standard html 'class' property, this function reenables it when using qlkit."
@@ -58,18 +89,6 @@
         (dissoc :class)
         (assoc :className (:class props)))
     props))
-
-(defn- gather-style-props [props]
-  "Gathers legal DOM style elements in style tag. Can override this behavior by using string key instead of keyword key."
-  (let [{root-props false styles true} (group-by (fn [[k v]]
-                                                   (some? (dom/style-attributes k)))
-                                                 props)]
-    (cond-> (into {}
-                  root-props)
-      (seq styles) (assoc :style
-                          (into {}
-                                (camel-case-keys styles))))))
-
 
 #?(:cljs (do (declare create-element)
 
