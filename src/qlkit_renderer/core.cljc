@@ -95,6 +95,8 @@
              (defn- ensure-element-type [typ]
                (or (cond (keyword? typ) (or (@ql/component-registry typ)
                                             (when (dom/valid-dom-elements typ)
+                                              (name typ))
+                                            (when (js/customElements.get (name typ))
                                               (name typ)))
                          (string? typ)  (when (dom/valid-dom-elements (keyword typ))
                                           typ))
